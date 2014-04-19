@@ -81,10 +81,17 @@ def sixth(matrix):
     rows_count = matrix.shape[0]
     columns_count = matrix.shape[1]
     mean_horizontal = 0
-    for col in columns_count:
-        for vertical in (row for row in rows_count if matrix[row,col] == color): #this means that pixels are "on"
-            mean_horizontal += col
-    sixth_feature = mean_horizontal/(horizontal_center * box_width)
+    x = 0 - box_width/2
+    y = 0 - box_height/2
+    count = 0
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[x, y] == color:
+                mean_horizontal += y
+                count += 1
+            y += 1
+        x += 1
+    sixth_feature = mean_horizontal/(count * box_width)
     return sixth_feature
 
 def seventh(matrix):
@@ -93,12 +100,24 @@ def seventh(matrix):
     rows_count = matrix.shape[0]
     columns_count = matrix.shape[1]
     mean_vertical = 0
-    for col in columns_count:
-        for vertical in (row for row in rows_count if matrix[row,col] == color): #this means that pixels are "on"
-            mean_vertical += vertical
-    seventh_feature = mean_vertical/(vertical_center * box_height)
+    x = 0 - box_width/2
+    y = 0 - box_height/2
+    count = 0
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[x, y] == color:
+                mean_vertical += x
+                count += 1
+            y += 1
+        x += 1
+    seventh_feature = mean_vertical/(count * box_height)
     return seventh_feature
 
+def eighth(matrix):
+    #8. The mean squared value of the horizontal pixel distances as measured in 6 above. This
+    #attribute will have a higher value for images whose pixels are more widely separated
+    #in the horizontal direction as would be the case for the letters W or M.
+    return
 
 def descriptor(matrix):
     # 16 features
