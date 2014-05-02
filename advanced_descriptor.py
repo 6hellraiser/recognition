@@ -89,8 +89,8 @@ def sixth(matrix):
     count = 0
     for row in rows_count:
         for col in columns_count:
-            if matrix[x, y] == color:
-                mean_horizontal += y ####################################################################3???
+            if matrix[row, col] == color:
+                mean_horizontal += y
                 count += 1
             y += 1
         x += 1
@@ -106,9 +106,9 @@ def seventh(matrix):
     x = 0 - box_width/2
     y = 0 - box_height/2
     count = 0
-    for row in rows_count: #################################################################################????
+    for row in rows_count: 
         for col in columns_count:
-            if matrix[x, y] == color:
+            if matrix[row, col] == color:
                 mean_vertical += x
                 count += 1
             y += 1
