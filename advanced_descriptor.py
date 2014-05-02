@@ -206,12 +206,32 @@ def thirteen_fourteen(matrix):
                     count_edges += 1
                     vert_sum += y
         y += 1
-    thirteen_feature = count_edges/box_height
+    thirteen_feature = count_edges/(box_height*box_width)
     fourteenth_feature = vert_sum/box_height
     features = [thirteen_feature, fourteenth_feature]
     return features
 
-
+def fifteen_sixteen(matrix):
+    #15. The mean number of edges (an "on" pixel immediately above either an "off" pixel
+    #or the image boundary) encountered when making systematic scans of the image from
+    #bottom to top over all horizontal positions within the box.
+    #16. The sum of horizontal positions of edges encountered as measured in 15 above.
+    rows_count = matrix.shape[0]
+    columns_count = matrix.shape[1]
+    count_edges = 0
+    x = 0
+    hor_sum = 0
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[row, col] == color:
+                if (row + 1) == rows_count or matrix[row + 1, col] != color:
+                    count_edges += 1
+                    hor_sum += x
+            x += 1
+    fifteen_feature = count_edges/(box_width*box_height)
+    sixteen_feature = hor_sum/box_width
+    features = [fifteen_feature, sixteen_feature]
+    return features
 
 def descriptor(matrix):
     # 16 features
