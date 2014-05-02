@@ -90,10 +90,10 @@ def sixth(matrix):
     for row in rows_count:
         for col in columns_count:
             if matrix[row, col] == color:
-                mean_horizontal += y
+                mean_horizontal += x
                 count += 1
-            y += 1
-        x += 1
+            x += 1
+        y += 1
     sixth_feature = mean_horizontal/(count * box_width)
     return sixth_feature
 
@@ -106,13 +106,13 @@ def seventh(matrix):
     x = 0 - box_width/2
     y = 0 - box_height/2
     count = 0
-    for row in rows_count: 
+    for row in rows_count:
         for col in columns_count:
             if matrix[row, col] == color:
-                mean_vertical += x
+                mean_vertical += y
                 count += 1
-            y += 1
-        x += 1
+            x += 1
+        y += 1
     seventh_feature = mean_vertical/(count * box_height)
     return seventh_feature
 
@@ -141,6 +141,77 @@ def nineth(matrix):
                 quadr_sum += ((vertical_center - row)/box_height)**2
     nineth_feature = math.sqrt(quadr_sum/on_pixels)
     return nineth_feature
+
+def tenth(matrix):
+    #10. The mean product of the horizontal and vertical distances for each "on" pixel as measured
+    #in 6 and 7 above. This attribute has a positive value for diagonal lines that run
+    #from bottom left to top right and a negative value for diagonal lines from top left to
+    #bottom right.
+    rows_count = matrix.shape[0]
+    columns_count = matrix.shape[1]
+    sum = 0
+    x = 0 - box_width/2
+    y = 0 - box_height/2
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[row, col] == color:
+                sum += x*y
+            x += 1
+        y += 1
+    return sum/(on_pixels*box_width*box_height)
+
+def eleventh_twelfth(matrix):
+    #11. The mean value of the squared horizontal distance times the vertical distance for each
+    #"on" pixel. This measures the correlation of the horizontal variance with the vertical
+    #position.
+    #12. The mean value of the squared vertical distance times the horizontal distance for each
+    #"on" pixel. This measures the correlation of the vertical variance with the horizontal
+    #position.
+    rows_count = matrix.shape[0]
+    columns_count = matrix.shape[1]
+    sum_gor = 0
+    sum_vert = 0
+    x = 0 - box_width/2
+    y = 0 - box_height/2
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[row, col] == color:
+                sum_gor += ((x/box_width)**2)*y
+                sum_vert += ((y/box_height)**2)*x
+            x += 1
+        y += 1
+    eleventh_feature = sum_gor/(on_pixels*box_height)
+    twelfth_feature = sum_vert/(on_pixels*box_width)
+    features = [eleventh_feature, twelfth_feature]
+    return features
+
+def thirteen_fourteen(matrix):
+    #13. The mean number of edges (an "on" pixel immediately to the right of either an "off"
+    #pixel or the image boundary) encountered when making systematic scans from left
+    #to right at all vertical positions within the box. This measure distinguishes between
+    #letters like "W" or "M" and letters like "I" or "L." #divide by height
+
+    #14. The sum of the vertical positions of edges encountered as measured in 13 above. This
+    #feature will give a higher value if there are more edges at the top of the box, as in
+    #the letter "Y." #divide by height
+    rows_count = matrix.shape[0]
+    columns_count = matrix.shape[1]
+    count_edges = 0
+    y = 0
+    vert_sum = 0
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[row, col] == color:
+                if (col-1) < 0 or matrix[row, col - 1] != color:
+                    count_edges += 1
+                    vert_sum += y
+        y += 1
+    thirteen_feature = count_edges/box_height
+    fourteenth_feature = vert_sum/box_height
+    features = [thirteen_feature, fourteenth_feature]
+    return features
+
+
 
 def descriptor(matrix):
     # 16 features
