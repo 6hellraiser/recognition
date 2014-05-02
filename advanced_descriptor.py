@@ -1,4 +1,5 @@
 import cv2
+import math
 from sklearn import svm
 import numpy as np
 
@@ -7,6 +8,7 @@ horizontal_center = 0
 vertical_center = 0
 box_width = 0
 box_height = 0
+on_pixels = 0;
 
 def first_third(matrix):
     #return integer
@@ -72,6 +74,7 @@ def fifth(matrix):
         for col in columns_count:
             if matrix[row, col] == color:
                 count += 1
+    on_pixels = count
     return count
 
 def sixth(matrix):
@@ -87,7 +90,7 @@ def sixth(matrix):
     for row in rows_count:
         for col in columns_count:
             if matrix[x, y] == color:
-                mean_horizontal += y
+                mean_horizontal += y ####################################################################3???
                 count += 1
             y += 1
         x += 1
@@ -103,7 +106,7 @@ def seventh(matrix):
     x = 0 - box_width/2
     y = 0 - box_height/2
     count = 0
-    for row in rows_count:
+    for row in rows_count: #################################################################################????
         for col in columns_count:
             if matrix[x, y] == color:
                 mean_vertical += x
@@ -117,7 +120,27 @@ def eighth(matrix):
     #8. The mean squared value of the horizontal pixel distances as measured in 6 above. This
     #attribute will have a higher value for images whose pixels are more widely separated
     #in the horizontal direction as would be the case for the letters W or M.
-    return
+    rows_count = matrix.shape[0]
+    columns_count = matrix.shape[1]
+    quadr_sum = 0
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[row, col] == color:
+                quadr_sum += ((horizontal_center - col)/box_width)**2
+    eighth_feature = math.sqrt(quadr_sum/on_pixels)
+    return eighth_feature
+
+def nineth(matrix):
+    # 9. The mean squared value of the vertical pixel distances as measured in 7 above.
+    rows_count = matrix.shape[0]
+    columns_count = matrix.shape[1]
+    quadr_sum = 0
+    for row in rows_count:
+        for col in columns_count:
+            if matrix[row, col] == color:
+                quadr_sum += ((vertical_center - row)/box_height)**2
+    nineth_feature = math.sqrt(quadr_sum/on_pixels)
+    return nineth_feature
 
 def descriptor(matrix):
     # 16 features
