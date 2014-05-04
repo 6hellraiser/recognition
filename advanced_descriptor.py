@@ -1,20 +1,21 @@
 import cv2
 import math
 from sklearn import svm
+import matplotlib.pyplot as plt
 import numpy as np
 
 color = 255
+black = 0
 horizontal_center = 0
 vertical_center = 0
-box_width = 0
-box_height = 0
-on_pixels = 0
+box_width = -1
+box_height = -1
+on_pixels = 1
 
 def roundd(number):
     return '%.1f' % round(number, 1)
 
 def first_third(matrix):
-    #return integer
     #1. The horizontal position, counting pixels from the left edge of the image, of the center
     #of the smallest rectangular box that can be drawn with all "on" pixels inside the box.
     #3. The width, in pixels, of the box.
@@ -22,17 +23,26 @@ def first_third(matrix):
     columns_count = matrix.shape[1]
     left_edge = -1
     right_edge = -1
-    for col in columns_count:
-        for row in rows_count:
-            if matrix[row, col] == color:
+    ok = 0
+    for col in range(columns_count):
+        for row in range(rows_count):
+            if matrix[col, row] == black:
                 left_edge = col
+                ok = 1
+            if ok == 1:
                 break
+        if ok == 1:
             break
+    ok = 0
+
     for col in reversed(range(columns_count)):
         for row in reversed(range(rows_count)):
-            if matrix[row, col] == color:
+            if matrix[row, col] == black:
                 right_edge = col
+                ok = 1
+            if ok == 1:
                 break
+        if ok == 1:
             break
     first_feature = (right_edge - left_edge)/2
     third_feature = right_edge - left_edge
@@ -49,8 +59,8 @@ def second_fourth(matrix):
     columns_count = matrix.shape[1]
     bottom_edge = -1
     top_edge = -1
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 top_edge = row
                 break
@@ -73,8 +83,8 @@ def fifth(matrix):
     rows_count = matrix.shape[0]
     columns_count = matrix.shape[1]
     count = 0
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 count += 1
     on_pixels = count
@@ -89,15 +99,15 @@ def sixth(matrix):
     mean_horizontal = 0
     x = 0 - box_width/2
     y = 0 - box_height/2
-    count = 0
-    for row in rows_count:
-        for col in columns_count:
+  #  count = 0
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 mean_horizontal += x
-                count += 1
+                #count += 1
             x += 1
         y += 1
-    sixth_feature = mean_horizontal/(count * box_width)
+    sixth_feature = mean_horizontal/(on_pixels * box_width)
     return roundd(sixth_feature)
 
 def seventh(matrix):
@@ -108,15 +118,15 @@ def seventh(matrix):
     mean_vertical = 0
     x = 0 - box_width/2
     y = 0 - box_height/2
-    count = 0
-    for row in rows_count:
-        for col in columns_count:
+    #count = 0
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 mean_vertical += y
-                count += 1
+               # count += 1
             x += 1
         y += 1
-    seventh_feature = mean_vertical/(count * box_height)
+    seventh_feature = mean_vertical/(on_pixels * box_height)
     return roundd(seventh_feature)
 
 def eighth(matrix):
@@ -126,8 +136,8 @@ def eighth(matrix):
     rows_count = matrix.shape[0]
     columns_count = matrix.shape[1]
     quadr_sum = 0
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 quadr_sum += ((horizontal_center - col)/box_width)**2
     eighth_feature = math.sqrt(quadr_sum/on_pixels)
@@ -138,8 +148,8 @@ def nineth(matrix):
     rows_count = matrix.shape[0]
     columns_count = matrix.shape[1]
     quadr_sum = 0
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 quadr_sum += ((vertical_center - row)/box_height)**2
     nineth_feature = math.sqrt(quadr_sum/on_pixels)
@@ -155,8 +165,8 @@ def tenth(matrix):
     sum = 0
     x = 0 - box_width/2
     y = 0 - box_height/2
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 sum += x*y
             x += 1
@@ -176,8 +186,8 @@ def eleventh_twelfth(matrix):
     sum_vert = 0
     x = 0 - box_width/2
     y = 0 - box_height/2
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 sum_gor += ((x/box_width)**2)*y
                 sum_vert += ((y/box_height)**2)*x
@@ -202,8 +212,8 @@ def thirteen_fourteen(matrix):
     count_edges = 0
     y = 0
     vert_sum = 0
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 if (col-1) < 0 or matrix[row, col - 1] != color:
                     count_edges += 1
@@ -224,8 +234,8 @@ def fifteen_sixteen(matrix):
     count_edges = 0
     x = 0
     hor_sum = 0
-    for row in rows_count:
-        for col in columns_count:
+    for col in range(columns_count):
+        for row in range(rows_count):
             if matrix[row, col] == color:
                 if (row + 1) == rows_count or matrix[row + 1, col] != color:
                     count_edges += 1
@@ -238,25 +248,111 @@ def fifteen_sixteen(matrix):
 
 def descriptor(matrix):
     # 16 features
+    vector = []
+    first = first_third(matrix)
+    for el in first:
+        vector.append(el)
+    second = second_fourth(matrix)
+    for el in second:
+        vector.append(el)
+    vector.append(fifth(matrix))
+    vector.append(sixth(matrix))
+    vector.append(seventh(matrix))
+    vector.append(eighth(matrix))
+    vector.append(nineth(matrix))
+    vector.append(tenth(matrix))
+    eleventh = eleventh_twelfth(matrix)
+    for el in eleventh:
+        vector.append(el)
+    thirteen = thirteen_fourteen(matrix)
+    for el in thirteen:
+        vector.append(el)
+    fifteen = fifteen_sixteen(matrix)
+    for el in fifteen:
+        vector.append(el)
+    return vector
 
+def predict(path, clf, input):
+    test_image = cv2.imread(path,0)
+
+    bin_matrix = cv2.threshold(test_image, 127, color, cv2.THRESH_BINARY)[1]
+    #cv2.imshow('digit', im_bw)
+    #cv2.waitKey(0)
+    #print type(im_bw)
+   # print im_bw.shape
+    descr = descriptor(bin_matrix)
+    label = clf.predict(descr)
+    print label
+   # plot_vector(descr, label, input)
     return
+
+
 
 def main():
 
     thresh = 127
     vectors = []
+    """
     images = [cv2.imread('new_learn/0_1.png',0), cv2.imread('new_learn/0_2.png',0), cv2.imread('new_learn/0_3.png',0), cv2.imread('new_learn/0_4.png',0),
               cv2.imread('new_learn/0_5.png',0), cv2.imread('new_learn/0_6.png',0),cv2.imread('new_learn/0_7.png',0), cv2.imread('new_learn/0_8.png',0),
               cv2.imread('new_learn/4_1.png',0),cv2.imread('new_learn/4_2.png',0),cv2.imread('new_learn/4_3.png',0),cv2.imread('new_learn/4_4.png',0),
               cv2.imread('new_learn/4_5.png',0),cv2.imread('new_learn/4_6.png',0), cv2.imread('new_learn/4_7.png',0),cv2.imread('new_learn/4_8.png',0),
               cv2.imread('new_learn/5_1.png',0),cv2.imread('new_learn/5_2.png',0),cv2.imread('new_learn/5_3.png',0),cv2.imread('new_learn/5_4.png',0),
               cv2.imread('new_learn/5_6.png',0),cv2.imread('new_learn/5_7.png',0),cv2.imread('new_learn/5_8.png',0)]
+    """
+    images = [cv2.imread('new_learn/0_1.png',0)]
     for el in images:
         binary_matrix = cv2.threshold(el, thresh, color, cv2.THRESH_BINARY)[1]
-       # cv2.imshow('digit', im_bw)
+        #cv2.imshow('digit', binary_matrix)
         #cv2.waitKey(0)
-        linear_vector = descriptor(binary_matrix)
+       # linear_vector = descriptor(binary_matrix)
+        linear_vector = descriptor(cv2.threshold(cv2.resize(binary_matrix,(8,10)),thresh,color,cv2.THRESH_BINARY)[1]) #test! comment this and uncommend previous string!!
         vectors.append(linear_vector)
+
+   # y = [0,0,0,0,0,0,0,0,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5]
+   # y = [0]
+   # clf = svm.SVC()
+   # clf.fit(vectors, y)
+
+    """
+    print 'expect 0, get: '
+    predict('new_ask/0_t1.png',clf,'0')
+    print 'expect 0, get: '
+    predict('new_ask/0_t2.png',clf,'0')
+    print 'expect 0, get: '
+    predict('new_ask/0_t3.png',clf,'0')
+    print 'expect 4, get: '
+    predict('new_ask/4_t1.png',clf,'4')
+    print 'expect 4, get: '
+    predict('new_ask/4_t2.png',clf,'4')
+    print 'expect 4, get: '
+    predict('new_ask/4_t3.png',clf,'4')
+    print 'expect 5, get: '
+    predict('new_ask/5_t1.png',clf,'5')
+    print 'expect 5, get: '
+    predict('new_ask/5_t2.png',clf,'5')
+    print 'expect 5, get: '
+    predict('new_ask/5_t3.png',clf,'5')
+
+    print
+    print 'output with noise-----------'
+    print
+
+    print 'expect 0, get: '
+    predict('error_ask/0_t1.png',clf,'0')
+    print 'expect 0, get: '
+    predict('error_ask/0_t2.png',clf,'0')
+    print 'expect 0, get: '
+    predict('error_ask/0_t3.png',clf,'0')
+    print 'expect 4, get: '
+    predict('error_ask/4_t1.png',clf,'4')
+    print 'expect 4, get: '
+    predict('error_ask/4_t2.png',clf,'4')
+    print 'expect 4, get: '
+    predict('error_ask/4_t3.png',clf,'4')
+    print 'expect 5, get: '
+    predict('error_ask/5_t1.png',clf,'5')
+    """
 
 if __name__ == '__main__':
     main()
