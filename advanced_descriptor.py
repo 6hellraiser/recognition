@@ -59,17 +59,25 @@ def second_fourth(matrix):
     columns_count = matrix.shape[1]
     bottom_edge = -1
     top_edge = -1
+    ok = 0
     for col in range(columns_count):
         for row in range(rows_count):
-            if matrix[row, col] == color:
+            if matrix[col, row] == color:
                 top_edge = row
+                ok = 1
+            if ok == 1:
                 break
+        if ok == 1:
             break
+    ok = 0
     for row in reversed(range(rows_count)):
         for col in reversed(range(columns_count)):
             if matrix[row, col] == color:
                 bottom_edge = row
+                ok = 1
+            if ok == 1:
                 break
+        if ok == 1:
             break
     second_feature = (bottom_edge - top_edge)/2
     fourth_feature = bottom_edge - top_edge
