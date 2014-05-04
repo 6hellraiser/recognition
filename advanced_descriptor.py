@@ -8,7 +8,10 @@ horizontal_center = 0
 vertical_center = 0
 box_width = 0
 box_height = 0
-on_pixels = 0;
+on_pixels = 0
+
+def roundd(number):
+    return '%.1f' % round(number, 1)
 
 def first_third(matrix):
     #return integer
@@ -75,7 +78,7 @@ def fifth(matrix):
             if matrix[row, col] == color:
                 count += 1
     on_pixels = count
-    return count
+    return roundd(count/(box_width*box_height))
 
 def sixth(matrix):
     #6. The mean horizontal position of all "on" pixels relative to the center of the box and
@@ -95,7 +98,7 @@ def sixth(matrix):
             x += 1
         y += 1
     sixth_feature = mean_horizontal/(count * box_width)
-    return sixth_feature
+    return roundd(sixth_feature)
 
 def seventh(matrix):
     #7. The mean vertical position of all "on" pixels relative to the center of the box and divided
@@ -114,7 +117,7 @@ def seventh(matrix):
             x += 1
         y += 1
     seventh_feature = mean_vertical/(count * box_height)
-    return seventh_feature
+    return roundd(seventh_feature)
 
 def eighth(matrix):
     #8. The mean squared value of the horizontal pixel distances as measured in 6 above. This
@@ -128,7 +131,7 @@ def eighth(matrix):
             if matrix[row, col] == color:
                 quadr_sum += ((horizontal_center - col)/box_width)**2
     eighth_feature = math.sqrt(quadr_sum/on_pixels)
-    return eighth_feature
+    return roundd(eighth_feature)
 
 def nineth(matrix):
     # 9. The mean squared value of the vertical pixel distances as measured in 7 above.
@@ -140,7 +143,7 @@ def nineth(matrix):
             if matrix[row, col] == color:
                 quadr_sum += ((vertical_center - row)/box_height)**2
     nineth_feature = math.sqrt(quadr_sum/on_pixels)
-    return nineth_feature
+    return roundd(nineth_feature)
 
 def tenth(matrix):
     #10. The mean product of the horizontal and vertical distances for each "on" pixel as measured
@@ -158,7 +161,7 @@ def tenth(matrix):
                 sum += x*y
             x += 1
         y += 1
-    return sum/(on_pixels*box_width*box_height)
+    return roundd(sum/(on_pixels*box_width*box_height))
 
 def eleventh_twelfth(matrix):
     #11. The mean value of the squared horizontal distance times the vertical distance for each
@@ -180,8 +183,8 @@ def eleventh_twelfth(matrix):
                 sum_vert += ((y/box_height)**2)*x
             x += 1
         y += 1
-    eleventh_feature = sum_gor/(on_pixels*box_height)
-    twelfth_feature = sum_vert/(on_pixels*box_width)
+    eleventh_feature = roundd(sum_gor/(on_pixels*box_height))
+    twelfth_feature = roundd(sum_vert/(on_pixels*box_width))
     features = [eleventh_feature, twelfth_feature]
     return features
 
@@ -206,9 +209,9 @@ def thirteen_fourteen(matrix):
                     count_edges += 1
                     vert_sum += y
         y += 1
-    thirteen_feature = count_edges/(box_height*box_width)
-    fourteenth_feature = vert_sum/box_height
-    features = [thirteen_feature, fourteenth_feature]
+    thirteen_feature = roundd(count_edges/(box_height*box_width))
+    fourteen_feature = roundd(vert_sum/box_height) #??????????????????????
+    features = [thirteen_feature, fourteen_feature]
     return features
 
 def fifteen_sixteen(matrix):
@@ -228,8 +231,8 @@ def fifteen_sixteen(matrix):
                     count_edges += 1
                     hor_sum += x
             x += 1
-    fifteen_feature = count_edges/(box_width*box_height)
-    sixteen_feature = hor_sum/box_width
+    fifteen_feature = roundd(count_edges/(box_width*box_height))
+    sixteen_feature = roundd(hor_sum/box_width) #???????????????????????
     features = [fifteen_feature, sixteen_feature]
     return features
 
