@@ -141,9 +141,7 @@ class Descriptor:
                     y += 1
             y = 0
             x += 1
-        print "mean vertical", mean_vertical
         seventh_feature = float(mean_vertical)/(Descriptor.on_pixels * Descriptor.box_height)
-        print "seventh feature", seventh_feature
         return self.roundd(seventh_feature)
 
     def eighth(self, matrix):
@@ -155,9 +153,9 @@ class Descriptor:
         quadr_sum = 0
         for col in range(columns_count):
             for row in range(rows_count):
-                if matrix[row, col] == Descriptor.color:
+                if matrix[row, col] == Descriptor.black:
                     quadr_sum += ((Descriptor.horizontal_center - col)/Descriptor.box_width)**2
-        eighth_feature = math.sqrt(quadr_sum/Descriptor.on_pixels)
+        eighth_feature = math.sqrt(float(quadr_sum)/Descriptor.on_pixels)
         return self.roundd(eighth_feature)
 
     def nineth(self, matrix):
@@ -167,9 +165,9 @@ class Descriptor:
         quadr_sum = 0
         for col in range(columns_count):
             for row in range(rows_count):
-                if matrix[row, col] == Descriptor.color:
+                if matrix[row, col] == Descriptor.black:
                     quadr_sum += ((Descriptor.vertical_center - row)/Descriptor.box_height)**2
-        nineth_feature = math.sqrt(quadr_sum/Descriptor.on_pixels)
+        nineth_feature = math.sqrt(float(quadr_sum)/Descriptor.on_pixels)
         return self.roundd(nineth_feature)
 
     def tenth(self, matrix):
