@@ -105,7 +105,7 @@ class Descriptor:
         Descriptor.on_pixels = count
         return self.roundd(float(count)/(Descriptor.box_width*Descriptor.box_height))
 
-    def sixth(self, matrix):
+    def sixth(self, matrix): ######################################################################333debug
         #6. The mean horizontal position of all "on" pixels relative to the center of the box and
         #divided by the width of the box. This feature has a negative value if the image is "leftheavy"
         #as would be the case for the letter L.
@@ -114,16 +114,17 @@ class Descriptor:
         mean_horizontal = 0
         x = 0 - Descriptor.box_width/2
         y = 0 - Descriptor.box_height/2
-      #  count = 0
         for col in range(columns_count):
             for row in range(rows_count):
-                if matrix[row, col] == Descriptor.color:
+                if matrix[row, col] == Descriptor.black:
                     mean_horizontal += x
-                    #count += 1
-                x += 1
-            y += 1
-        sixth_feature = mean_horizontal/(Descriptor.on_pixels * Descriptor.box_width)
-        return self.roundd(sixth_feature)
+                y += 1
+            y = 0
+            x += 1
+        sixth_feature = float(mean_horizontal)/(Descriptor.on_pixels * Descriptor.box_width)
+    #    print "mean horizontal", mean_horizontal
+    #    print "sixth feature", sixth_feature
+        return self.roundd(sixth_feature) #very little number!
 
     def seventh(self, matrix):
         #7. The mean vertical position of all "on" pixels relative to the center of the box and divided
@@ -133,15 +134,16 @@ class Descriptor:
         mean_vertical = 0
         x = 0 - Descriptor.box_width/2
         y = 0 - Descriptor.box_height/2
-        #count = 0
         for col in range(columns_count):
             for row in range(rows_count):
-                if matrix[row, col] == Descriptor.color:
+                if matrix[row, col] == Descriptor.black:
                     mean_vertical += y
-                   # count += 1
-                x += 1
-            y += 1
-        seventh_feature = mean_vertical/(Descriptor.on_pixels * Descriptor.box_height)
+                    y += 1
+            y = 0
+            x += 1
+        print "mean vertical", mean_vertical
+        seventh_feature = float(mean_vertical)/(Descriptor.on_pixels * Descriptor.box_height)
+        print "seventh feature", seventh_feature
         return self.roundd(seventh_feature)
 
     def eighth(self, matrix):
